@@ -21,10 +21,10 @@ A lightweight, cloud-agnostic CLI tool that generates and populates secrets in H
 
 ## Installation
 
-### Homebrew (macOS/Linux)
+### Docker
 
 ```bash
-brew install pavlenkoa/tap/vsg
+docker pull proteantecs/vault-secrets-generator:latest
 ```
 
 ### From Source
