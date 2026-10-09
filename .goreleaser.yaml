@@ -108,7 +108,7 @@ release:
     ## Docker
 
     ```bash
-    docker pull ghcr.io/pavlenkoa/vault-secrets-generator:{{ .Version }}
+    docker pull proteantecs/vault-secrets-generator:{{ .Version }}
     ```
 
     ## Installation
@@ -127,7 +127,7 @@ dockers_v2:
       - vsg
     dockerfile: Dockerfile.goreleaser
     images:
-      - "ghcr.io/pavlenkoa/vault-secrets-generator"
+      - "proteantecs/vault-secrets-generator"
     tags:
       - "{{ .Version }}"
       - "latest"

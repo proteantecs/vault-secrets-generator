@@ -164,5 +164,13 @@ func setupFetchers(ctx context.Context) *fetcher.Registry {
 		registry.Register(s3Fetcher)
 	}
 
+	// AWS Secrets Manager fetcher (aws_sm function)
+	smFetcher, err := fetcher.NewAWSSMFetcher(ctx)
+	if err != nil {
+		getLogger().Debug("AWS Secrets Manager fetcher not available", "error", err)
+	} else {
+		registry.Register(smFetcher)
+	}
+
 	return registry
 }

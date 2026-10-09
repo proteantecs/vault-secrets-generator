@@ -103,6 +103,7 @@ func buildEvalContext(vars Variables) *hcl.EvalContext {
 			"env":           makeEnvFunction(vars),
 			"generate":      makeGenerateFunction(),
 			"json":          makeSourceFunction("json"),
+			"aws_sm":        makeAWSSMFunction(),
 			"yaml":          makeSourceFunction("yaml"),
 			"raw":           makeRawFunction(),
 			"vault":         makeVaultFunction(),
@@ -277,6 +278,30 @@ func makeSourceFunction(sourceType string) function.Function {
 				"_username":      cty.StringVal(""),
 				"_username_from": cty.StringVal(""),
 			}), nil
+		},
+	})
+}
+
+// makeAWSSMFunction creates aws_sm(secret, key): a key of a JSON secret in AWS
+// Secrets Manager, resolved like json("awssm://<secret>", ".<key>").
+func makeAWSSMFunction() function.Function {
+	jsonFn := makeSourceFunction("json")
+	return function.New(&function.Spec{
+		Params: []function.Parameter{
+			{Name: "secret", Type: cty.String},
+			{Name: "key", Type: cty.String},
+		},
+		VarParam: &function.Parameter{
+			Name: "options",
+			Type: cty.DynamicPseudoType,
+		},
+		Type: function.StaticReturnType(valueMarkerType),
+		Impl: func(args []cty.Value, retType cty.Type) (cty.Value, error) {
+			jsonArgs := append([]cty.Value{
+				cty.StringVal("awssm://" + args[0].AsString()),
+				cty.StringVal("." + args[1].AsString()),
+			}, args[2:]...)
+			return jsonFn.Call(jsonArgs)
 		},
 	})
 }

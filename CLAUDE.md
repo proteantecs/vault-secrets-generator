@@ -35,6 +35,7 @@ vault-secrets-generator/
 │   ├── fetcher/
 │   │   ├── fetcher.go              # Fetcher interface
 │   │   ├── s3.go                   # S3 backend
+│   │   ├── awssm.go                # AWS Secrets Manager backend (awssm://)
 │   │   ├── gcs.go                  # GCS backend
 │   │   ├── azure.go                # Azure Blob Storage backend
 │   │   └── local.go                # Local file backend

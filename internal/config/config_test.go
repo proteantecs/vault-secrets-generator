@@ -1352,3 +1352,31 @@ secret "test-secret" {
 		t.Errorf("expected defaults symbols=5, got %d", cfg.Defaults.Generate.Symbols)
 	}
 }
+
+func TestParseHCL_AWSSMFunction(t *testing.T) {
+	hcl := `
+secret "test-secret" {
+  path = "test"
+
+  content {
+    foo = aws_sm("vsg/prod/shared", "foo")
+    bar = aws_sm("vsg/prod/qa", "bar", {strategy = "create"})
+  }
+}
+`
+
+	cfg, err := ParseHCL([]byte(hcl), "test.hcl", nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	foo := cfg.Secrets["test-secret"].Content["foo"]
+	if foo.Type != ValueTypeJSON || foo.URL != "awssm://vsg/prod/shared" || foo.Query != ".foo" {
+		t.Errorf("unexpected foo value: %+v", foo)
+	}
+
+	bar := cfg.Secrets["test-secret"].Content["bar"]
+	if bar.Strategy != StrategyCreate {
+		t.Errorf("expected create strategy, got %q", bar.Strategy)
+	}
+}

@@ -402,6 +402,7 @@ secret "dev-config" {
 | JSON | `json(url, query)` | Extract from JSON file |
 | YAML | `yaml(url, query)` | Extract from YAML file |
 | Raw | `raw(url)` | Raw file content |
+| AWS Secrets Manager | `aws_sm(secret, key)` | Key of a JSON secret in AWS Secrets Manager |
 | Vault | `vault(path, key)` | Copy from another Vault path |
 | Command | `command(cmd)` | Execute shell command |
 | Env | `env(name)` | Environment variable |
@@ -418,6 +419,8 @@ ssh_key  = raw("s3://bucket/key.pem", {strategy = "create"})
 password = generate({length = 64, strategy = "update"})
 ```
 
+`aws_sm("vsg/prod/shared", "foo")` is shorthand for `json("awssm://vsg/prod/shared", ".foo")`. It uses the default AWS credential chain (IRSA, env, instance role) and needs `secretsmanager:GetSecretValue` on the secret.
+
 ### URL Schemes
 
 For `json()`, `yaml()`, and `raw()` functions:
@@ -425,6 +428,7 @@ For `json()`, `yaml()`, and `raw()` functions:
 | Scheme | Source |
 |--------|--------|
 | `s3://bucket/path` | AWS S3 |
+| `awssm://secret-name` | AWS Secrets Manager (secret string) |
 | `gcs://bucket/path` | Google Cloud Storage |
 | `az://container/path` | Azure Blob Storage |
 | `/path/to/file` | Local file (no scheme) |
