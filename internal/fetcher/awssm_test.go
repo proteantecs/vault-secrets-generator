@@ -23,7 +23,7 @@ func (f *fakeSM) GetSecretValue(_ context.Context, in *secretsmanager.GetSecretV
 func TestAWSSMFetcher_Supports(t *testing.T) {
 	f := &AWSSMFetcher{}
 	for uri, want := range map[string]bool{
-		"awssm://vsg/prod/shared": true,
+		"awssm://vault/prod/shared": true,
 		"s3://bucket/key":         false,
 		"":                        false,
 	} {
@@ -37,11 +37,11 @@ func TestAWSSMFetcher_Fetch(t *testing.T) {
 	fake := &fakeSM{out: &secretsmanager.GetSecretValueOutput{SecretString: aws.String(`{"foo":"bar"}`)}}
 	f := &AWSSMFetcher{client: fake}
 
-	data, err := f.Fetch(context.Background(), "awssm://vsg/prod/shared")
+	data, err := f.Fetch(context.Background(), "awssm://vault/prod/shared")
 	if err != nil {
 		t.Fatalf("Fetch() error = %v", err)
 	}
-	if string(data) != `{"foo":"bar"}` || fake.id != "vsg/prod/shared" {
+	if string(data) != `{"foo":"bar"}` || fake.id != "vault/prod/shared" {
 		t.Errorf("Fetch() = %q for id %q", data, fake.id)
 	}
 }

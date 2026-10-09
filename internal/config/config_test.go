@@ -1359,8 +1359,8 @@ secret "test-secret" {
   path = "test"
 
   content {
-    foo = aws_sm("vsg/prod/shared", "foo")
-    bar = aws_sm("vsg/prod/qa", "bar", {strategy = "create"})
+    foo = aws_sm("vault/prod/shared", "foo")
+    bar = aws_sm("vault/prod/qa", "bar", {strategy = "create"})
   }
 }
 `
@@ -1371,7 +1371,7 @@ secret "test-secret" {
 	}
 
 	foo := cfg.Secrets["test-secret"].Content["foo"]
-	if foo.Type != ValueTypeJSON || foo.URL != "awssm://vsg/prod/shared" || foo.Query != ".foo" {
+	if foo.Type != ValueTypeJSON || foo.URL != "awssm://vault/prod/shared" || foo.Query != ".foo" {
 		t.Errorf("unexpected foo value: %+v", foo)
 	}
 
