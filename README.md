@@ -419,7 +419,7 @@ ssh_key  = raw("s3://bucket/key.pem", {strategy = "create"})
 password = generate({length = 64, strategy = "update"})
 ```
 
-`aws_sm("vault/prod/shared", "foo")` is shorthand for `json("awssm://vault/prod/shared", ".foo")`. It uses the default AWS credential chain (IRSA, env, instance role) and needs `secretsmanager:GetSecretValue` on the secret.
+`aws_sm("vault/prod/shared", "foo")` is shorthand for `json("awssm://vault/prod/shared", ".foo")`. It uses the default AWS credential chain (IRSA, env, instance role) and needs `secretsmanager:GetSecretValue` on the secret. Set `AWS_SM_REGION` when the secret lives in a different region than the cluster.
 
 ### URL Schemes
 

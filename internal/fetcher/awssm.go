@@ -3,6 +3,7 @@ package fetcher
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -27,6 +28,11 @@ func NewAWSSMFetcher(ctx context.Context) (*AWSSMFetcher, error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("loading AWS config: %w", err)
+	}
+
+	// Secrets live in one region, which may differ from the env's own region.
+	if region := os.Getenv("AWS_SM_REGION"); region != "" {
+		cfg.Region = region
 	}
 
 	return &AWSSMFetcher{client: secretsmanager.NewFromConfig(cfg)}, nil
