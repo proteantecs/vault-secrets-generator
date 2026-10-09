@@ -15,8 +15,6 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
-      - darwin
-      - windows
     goarch:
       - amd64
       - arm64
@@ -26,100 +24,22 @@ builds:
       - -X github.com/pavlenkoa/vault-secrets-generator/internal/command.Commit={{.Commit}}
       - -X github.com/pavlenkoa/vault-secrets-generator/internal/command.BuildDate={{.Date}}
 
+# Only the Docker image is shipped from this fork.
 archives:
-  - id: default
-    ids:
-      - vsg
-    formats:
-      - tar.gz
-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    format_overrides:
-      - goos: windows
-        formats:
-          - zip
-    files:
-      - README.md
-      - LICENSE
-      - examples/*
-
-brews:
-  - name: vsg
-    repository:
-      owner: pavlenkoa
-      name: homebrew-tap
-      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
-    directory: Formula
-    homepage: "https://github.com/pavlenkoa/vault-secrets-generator"
-    description: "Vault Secrets Generator - CLI tool for managing secrets in HashiCorp Vault"
-    license: "Apache-2.0"
-    test: |
-      system "#{bin}/vsg", "version"
+  - formats:
+      - binary
 
 checksum:
-  name_template: "checksums.txt"
+  disable: true
+
+changelog:
+  disable: true
+
+release:
+  disable: true
 
 snapshot:
   version_template: "{{ incpatch .Version }}-next"
-
-changelog:
-  sort: asc
-  use: git
-  filters:
-    exclude:
-      - "^test:"
-      - "(?i)^.*planned feature.*$"
-      - "(?i)^.*implementation plan.*$"
-      - Merge pull request
-      - Merge branch
-  groups:
-    - title: "⚠️ Breaking Changes"
-      regexp: "(?i)^.*breaking.*$"
-      order: 0
-    - title: Features
-      regexp: "(?i)^.*(feat:|implement|add ).*$"
-      order: 1
-    - title: Bug Fixes
-      regexp: "(?i)^.*(fix:|bugfix).*$"
-      order: 2
-    - title: Dependencies
-      regexp: "(?i)^.*(update.*depend|upgrade|bump).*$"
-      order: 3
-    - title: Infrastructure
-      regexp: "(?i)^.*(update.*go|update.*version|dockerfile|docker|helm|ci:|chore:).*$"
-      order: 4
-    - title: Documentation
-      regexp: "(?i)^.*(docs:|document|readme).*$"
-      order: 5
-    - title: Other
-      order: 999
-
-release:
-  github:
-    owner: pavlenkoa
-    name: vault-secrets-generator
-  draft: false
-  prerelease: auto
-  mode: replace
-  header: |
-    ## VSG {{ .Version }}
-
-    Vault Secrets Generator - A lightweight CLI tool for managing secrets in HashiCorp Vault.
-  footer: |
-    ## Docker
-
-    ```bash
-    docker pull proteantecs/vault-secrets-generator:{{ .Version }}
-    ```
-
-    ## Installation
-
-    ### Homebrew (macOS/Linux)
-    ```bash
-    brew install pavlenkoa/tap/vsg
-    ```
-
-    ### Binary
-    Download the appropriate binary for your platform from the assets below.
 
 dockers_v2:
   - id: default
@@ -137,8 +57,4 @@ dockers_v2:
     labels:
       "org.opencontainers.image.title": "{{ .ProjectName }}"
       "org.opencontainers.image.description": "Vault Secrets Generator"
-      "org.opencontainers.image.url": "https://github.com/pavlenkoa/vault-secrets-generator"
-      "org.opencontainers.image.source": "https://github.com/pavlenkoa/vault-secrets-generator"
-      "org.opencontainers.image.version": "{{ .Version }}"
-      "org.opencontainers.image.revision": "{{ .FullCommit }}"
-      "org.opencontainers.image.created": "{{ .Date }}"
+      "org.opencontainers.image.url": "https://github.com/proteantecs/vault-secrets-generator"
