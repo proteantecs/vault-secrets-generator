@@ -24,22 +24,73 @@ builds:
       - -X github.com/pavlenkoa/vault-secrets-generator/internal/command.Commit={{.Commit}}
       - -X github.com/pavlenkoa/vault-secrets-generator/internal/command.BuildDate={{.Date}}
 
-# Only the Docker image is shipped from this fork.
 archives:
-  - formats:
-      - binary
+  - id: default
+    ids:
+      - vsg
+    formats:
+      - tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+      - examples/*
 
 checksum:
-  disable: true
-
-changelog:
-  disable: true
-
-release:
-  disable: true
+  name_template: "checksums.txt"
 
 snapshot:
   version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: git
+  filters:
+    exclude:
+      - "^test:"
+      - "(?i)^.*planned feature.*$"
+      - "(?i)^.*implementation plan.*$"
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: "⚠️ Breaking Changes"
+      regexp: "(?i)^.*breaking.*$"
+      order: 0
+    - title: Features
+      regexp: "(?i)^.*(feat:|implement|add ).*$"
+      order: 1
+    - title: Bug Fixes
+      regexp: "(?i)^.*(fix:|bugfix).*$"
+      order: 2
+    - title: Dependencies
+      regexp: "(?i)^.*(update.*depend|upgrade|bump).*$"
+      order: 3
+    - title: Infrastructure
+      regexp: "(?i)^.*(update.*go|update.*version|dockerfile|docker|helm|ci:|chore:).*$"
+      order: 4
+    - title: Documentation
+      regexp: "(?i)^.*(docs:|document|readme).*$"
+      order: 5
+    - title: Other
+      order: 999
+
+release:
+  github:
+    owner: proteantecs
+    name: vault-secrets-generator
+  draft: false
+  prerelease: auto
+  mode: replace
+  header: |
+    ## VSG {{ .Version }}
+
+    Vault Secrets Generator - A lightweight CLI tool for managing secrets in HashiCorp Vault.
+  footer: |
+    ## Docker
+
+    ```bash
+    docker pull proteantecs/vault-secrets-generator:{{ .Version }}
+    ```
 
 dockers_v2:
   - id: default
@@ -58,3 +109,7 @@ dockers_v2:
       "org.opencontainers.image.title": "{{ .ProjectName }}"
       "org.opencontainers.image.description": "Vault Secrets Generator"
       "org.opencontainers.image.url": "https://github.com/proteantecs/vault-secrets-generator"
+      "org.opencontainers.image.source": "https://github.com/proteantecs/vault-secrets-generator"
+      "org.opencontainers.image.version": "{{ .Version }}"
+      "org.opencontainers.image.revision": "{{ .FullCommit }}"
+      "org.opencontainers.image.created": "{{ .Date }}"
