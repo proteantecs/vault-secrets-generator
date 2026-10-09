@@ -1,7 +1,7 @@
 # Default values for vault-secrets-generator
 
 image:
-  repository: ghcr.io/pavlenkoa/vault-secrets-generator
+  repository: proteantecs/vault-secrets-generator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion
   tag: ""

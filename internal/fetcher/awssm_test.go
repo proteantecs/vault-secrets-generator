@@ -24,8 +24,8 @@ func TestAWSSMFetcher_Supports(t *testing.T) {
 	f := &AWSSMFetcher{}
 	for uri, want := range map[string]bool{
 		"awssm://vault/prod/shared": true,
-		"s3://bucket/key":         false,
-		"":                        false,
+		"s3://bucket/key":           false,
+		"":                          false,
 	} {
 		if got := f.Supports(uri); got != want {
 			t.Errorf("Supports(%q) = %v, want %v", uri, got, want)
@@ -57,5 +57,18 @@ func TestAWSSMFetcher_FetchErrors(t *testing.T) {
 	}
 	if _, err := (&AWSSMFetcher{}).Fetch(ctx, "awssm://"); err == nil {
 		t.Error("expected error for empty name")
+	}
+}
+
+func TestNewAWSSMFetcher_RegionOverride(t *testing.T) {
+	t.Setenv("AWS_REGION", "ap-northeast-1")
+	t.Setenv("AWS_SM_REGION", "eu-west-1")
+
+	f, err := NewAWSSMFetcher(context.Background())
+	if err != nil {
+		t.Fatalf("NewAWSSMFetcher() error = %v", err)
+	}
+	if got := f.client.(*secretsmanager.Client).Options().Region; got != "eu-west-1" {
+		t.Errorf("region = %q, want eu-west-1", got)
 	}
 }

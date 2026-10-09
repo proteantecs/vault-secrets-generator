@@ -12,8 +12,7 @@ LDFLAGS := -s -w \
 	-X $(MODULE)/internal/command.BuildDate=$(BUILD_DATE)
 
 # Docker
-DOCKER_REGISTRY ?= ghcr.io
-DOCKER_IMAGE ?= $(DOCKER_REGISTRY)/pavlenkoa/vault-secrets-generator
+DOCKER_IMAGE ?= proteantecs/vault-secrets-generator
 DOCKER_TAG ?= $(VERSION)
 
 # Go
